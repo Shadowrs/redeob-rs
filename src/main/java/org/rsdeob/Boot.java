@@ -11,8 +11,9 @@ import org.rsdeob.byteio.CompleteResolvingJarDumper;
 import org.rsdeob.deobimpl.ConstantComparisonReordererPhase;
 import org.rsdeob.deobimpl.ConstantOperationReordererPhase;
 import org.rsdeob.deobimpl.EmptyParameterFixerPhase;
-import org.rsdeob.deobimpl.OldschoolDummyMethodPhase;
 import org.rsdeob.deobimpl.OpaquePredicateRemoverPhase;
+import org.rsdeob.deobimpl.RS07DummyMethodPhase;
+import org.rsdeob.deobimpl.RS3DummyMethodPhase;
 import org.rsdeob.deobimpl.RTECatchBlockRemoverPhase;
 import org.rsdeob.deobimpl.UnusedFieldsPhase;
 import org.rsdeob.stdlib.IContext;
@@ -30,7 +31,7 @@ public class Boot {
 			return;
 		}
 		
-		int rev = 104;
+		int rev = 108;
 		if(args.length > 0) {
 			rev = Integer.parseInt(args[0]);
 		}
@@ -64,12 +65,21 @@ public class Boot {
 		}
 		
 		CompleteResolvingJarDumper dumper = new CompleteResolvingJarDumper(dl.getJarContents());
-		File outFile = new File(String.format("out/%d/%d.jar", rev, rev));
+		File outFile = new File(String.format("out/%d/%s.jar", rev, "transformed"));
 		outFile.mkdirs();
 		dumper.dump(outFile);
 	}
 
 	private static IPhase[] loadPhases() {
-		return new IPhase[] { new OldschoolDummyMethodPhase(), new UnusedFieldsPhase(), new RTECatchBlockRemoverPhase(), new ConstantComparisonReordererPhase(), new OpaquePredicateRemoverPhase(), new EmptyParameterFixerPhase(), new ConstantOperationReordererPhase() };
+		return new IPhase[] { 
+				//new RS3DummyMethodPhase(), 
+				new RS07DummyMethodPhase(), 
+				new UnusedFieldsPhase(),
+				new RTECatchBlockRemoverPhase(), 
+				new ConstantComparisonReordererPhase(), 
+				new OpaquePredicateRemoverPhase(),
+				new EmptyParameterFixerPhase(), 
+				new ConstantOperationReordererPhase() 
+		};
 	}
 }

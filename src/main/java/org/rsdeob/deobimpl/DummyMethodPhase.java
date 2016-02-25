@@ -1,5 +1,6 @@
 package org.rsdeob.deobimpl;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -74,6 +75,7 @@ public abstract class DummyMethodPhase implements IPhase {
 					MethodNode mn = lit.next();
 					DirectedGraph<MethodNode, MethodNode> cg = callgraphs.get(cn);
 					if (!cg.containsVertex(mn)) {
+						if (Modifier.isNative(mn.access)) continue;
 						lit.remove();
 						removed++;
 					}

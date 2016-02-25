@@ -5,11 +5,11 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.rsdeob.stdlib.klass.ClassTree;
 
-public class OldschoolDummyMethodPhase extends DummyMethodPhase {
+public class RS3DummyMethodPhase extends DummyMethodPhase {
 
 	@Override
 	protected boolean protectedMethod(ClassTree tree, MethodNode mn) {
-		return mn.name.length() > 2 || isInherited(tree, mn.owner, mn);
+		return mn.name.equals("run") || mn.name.equals("add") || mn.name.length() > 3 || isInherited(tree, mn.owner, mn);
 	}
 	
 	private MethodNode getMethodFromSuper(ClassTree tree, ClassNode cn, String name, String desc, boolean isStatic) {

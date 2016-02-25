@@ -68,7 +68,7 @@ public class EmptyParameterFixerPhase implements IPhase {
 
 	public static final String KEY_ID = EmptyParameterFixerPhase.class.getCanonicalName();
 
-	private int total = 0, pass = 1, removed = 0;
+	private int total = 0, pass = 0, removed = 0;
 	private int callnames, unchanged, nulls;
 	private final List<MethodNode> skipped = new ArrayList<MethodNode>();
 	private final Set<MethodNode> changed = new HashSet<MethodNode>();
@@ -86,14 +86,11 @@ public class EmptyParameterFixerPhase implements IPhase {
 			Map<MethodNode, String> map = new HashMap<MethodNode, String>();
 
 			for (ClassNode cn : tree) {
-				for (MethodNode m : cn.methods) {
+				for (MethodNode m : cn.methods) {			
 					if (m.name.equals("<init>") || m.desc.equals("<clinit>") || !ParameterUtil.isDummy(m))
 						continue;
 
-					if (m.name.length() > 2 && (!m.name.contains("get") && !m.name.contains("set")
-							&& !m.name.contains("add") && !m.name.contains("process") && !m.name.contains("read")
-							&& !m.name.contains("write") && !m.name.contains("val") && !m.name.contains("load")
-							&& !m.name.contains("apply") && !m.name.contains("transform"))) {
+					if (m.name.length() > 2) {
 						skipped.add(m);
 						continue;
 					}

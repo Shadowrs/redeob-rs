@@ -20,10 +20,14 @@ import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.IntInsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.analysis.Analyzer;
+import org.objectweb.asm.tree.analysis.AnalyzerException;
+import org.objectweb.asm.tree.analysis.BasicInterpreter;
+import org.objectweb.asm.tree.analysis.BasicValue;
+import org.objectweb.asm.tree.analysis.Frame;
 import org.objectweb.asm.util.Printer;
 import org.rsdeob.stdlib.IContext;
 import org.rsdeob.stdlib.deob.IPhase;
-import org.topdank.banalysis.asm.insn.InstructionPrinter;
 
 public class ConstantOperationReordererPhase implements IPhase {
 	
@@ -51,19 +55,16 @@ public class ConstantOperationReordererPhase implements IPhase {
 		for(Entry<MethodNode, Set<ReorderActor>> e : actorMap.entrySet()) {
 			MethodNode m = e.getKey();
 			
-			if(m.toString().equals("f.u(Lee;Ljava/awt/Component;II)Lbg;")) {
-				InstructionPrinter.consolePrint(m);
-				System.err.println("done");
-				System.out.println(TREE_BUILDER.build(m));
-				System.err.println("done");
+			if(m.toString().equals("v.h(Lhp;Lhp;)V")) {
+				//InstructionPrinter.consolePrint(m);
 			}
 			
 			for(ReorderActor actor : e.getValue()) {
 				actor.reorder(m);
 			}
 			
-			if(m.toString().equals("f.u(Lee;Ljava/awt/Component;II)Lbg;")) {
-				InstructionPrinter.consolePrint(m);
+			if(m.toString().equals("v.h(Lhp;Lhp;)V")) {
+				//InstructionPrinter.consolePrint(m);
 			}
 		}
 		
@@ -217,6 +218,7 @@ public class ConstantOperationReordererPhase implements IPhase {
 		abstract void reorder(MethodNode m);
 	}
 	
+	//TODO Fix this reordering
 	class SimpleOperationReorderer extends ReorderActor {
 
 		SimpleOperationReorderer(ArithmeticNode an, AbstractInsnNode[] insns, NumberNode cst) {
@@ -225,25 +227,27 @@ public class ConstantOperationReordererPhase implements IPhase {
 
 		@Override
 		void reorder(MethodNode m) {
-//			InsnList list = m.instructions;
-//			AbstractInsnNode cstInsn = insns[0];
-//			AbstractInsnNode opInsn = insns[1];
-//			if(m.toString().equals("f.u(Lee;Ljava/awt/Component;IIB)Lbg;")) {
-//				System.out.println(cstInsn + "  " + opInsn);
-//				BasicInterpreter ba = new BasicInterpreter();
-//				Analyzer<BasicValue> analyser = new Analyzer<BasicValue>(ba);
-//				try {
-//					analyser.analyze(m.owner.name, m);
-//				} catch (AnalyzerException e1) {
-//					e1.printStackTrace();
-//					System.out.println("at: " + e1.node);
-//				}
-//				Frame<BasicValue> frame = analyser.getFrames()[list.indexOf(opInsn)];
-//				System.out.println(frame.getStackSize());
-//				
-//			}
-//			list.remove(cstInsn);
-//			list.insertBefore(opInsn, cstInsn);
+			InsnList list = m.instructions;
+			AbstractInsnNode cstInsn = insns[0];
+			AbstractInsnNode opInsn = insns[1];
+			if(m.toString().equals("/v.h(Lhp;Lhp;)V")) {
+				System.out.println(m.instructions.get(978));
+				BasicInterpreter ba = new BasicInterpreter();
+				Analyzer<BasicValue> analyser = new Analyzer<BasicValue>(ba);
+				try {
+					analyser.analyze(m.owner.name, m);
+				} catch (AnalyzerException e1) {
+					e1.printStackTrace();
+					System.out.println("at: " + e1.node);
+				}
+				Frame<BasicValue> frame = analyser.getFrames()[list.indexOf(opInsn)];
+				System.out.println(cstInsn + "  " + opInsn);
+				System.out.println(frame.getStackSize());
+				System.out.println();
+				
+			}
+			//list.remove(cstInsn);
+			//list.insertBefore(opInsn, cstInsn);	
 		}
 	}
 	
